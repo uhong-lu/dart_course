@@ -9,14 +9,15 @@ String decribe(String name, int age){
 }
 
 //具名參數
-void main(){
-  final person = decribe(name : 'Andrea',age : 36);
-  print (person);
-}
+// void main(){
+//   final person = decribe(name : 'Andrea',age : 36);
+//   print (person);
+// }
 
-String decribe({String name, int age}){
-  return 'My name is $name and I am $age years old';
-}
+// String decribe({String name, int age}){
+//   return 'My name is $name and I am $age years old';
+// }
+
 
 // // --- 案例一：位置參數 (Positional Arguments) ---
 // // 特性：資料的意義由傳入的「物理順序」決定。
