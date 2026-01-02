@@ -1,21 +1,15 @@
 import 'package:equatable/equatable.dart';
 
-class Point extends{
+class Point extends Equatable{
   const Point(this.x, this.y);
   final int x;
   final int y;
 
+  @override
+  List<Object?> get props => [x, y];
 
   @override
-  String toString() => 'Point($x, $y)';
-
-  @override
-  // TODO: implement hashCode
-  int get hashCode => super.hashCode;
-  @override
-  bool operator ==(covariant Point other) {
-    return x == other.x && y == other.y;
-  }
+  bool get stringify => true;
 
   Point operator +(Point other) {
     return Point(x + other.x, y + other.y);
@@ -27,13 +21,13 @@ class Point extends{
 }
 
 void main() {
-  // make this compile by overriding the + operator
-  print(Point(1, 1) + Point(2, 0)); // should print: Point(3, 1)
-  // make this compile by overriding the * operator
-  print(Point(2, 1) * 5); // should print: Point(10, 5)
+  print(Point(0, 0) == Point(0, 0));
+  print(Point(1, 1));
 }
 
-
+// In summart, we have seen that it's good practice to override the equality 'hashCode' and 'toString()' methods when we create our own classes
+// if we have a lot of classes, it can become tedious to ocerride all these things
+// Equatable package solves this problem for us
 
 
 
@@ -220,3 +214,130 @@ void main() {
 // 效能關鍵：hashCode 的品質決定了 Map 和 Set 的執行速度。
 
 // 不可變性建議：雖然原始碼沒明說，但 hashCode 最好只根據 final 欄位來計算，以維持一致性。
+
+
+
+// 在之前的學習中，我們知道要讓兩個物件「相等」，必須手動覆寫 operator == 和 hashCode，這非常麻煩且容易出錯。Equatable 套件就是為了解決這個問題而生的「救星」。
+// 初學者必讀筆記
+// 1. 為什麼要用 Equatable？
+// 手寫的痛苦：要正確實作 == 和 hashCode 很難，你需要處理型別檢查、null 檢查、還要用複雜的數學算雜湊值。只要漏了一個，Set 和 Map 就會出錯。
+
+// Equatable 的解法：它把這些複雜的邏輯封裝在底層。你只需要告訴它：「我看重的是 x 和 y (get props => [x, y])」，剩下的它全包了。
+
+// 2. props 是什麼？
+// 它是 Properties (屬性) 的縮寫。
+
+// 把它想像成一個 「特徵清單」。你告訴電腦：「只要這兩個物件的特徵清單（props）內容一樣，它們就是雙胞胎（相等）。」
+
+// 3. stringify 是什麼？
+// 這是一個開關。
+
+// 打開後 (true)，Equatable 會幫你產生一個漂亮的 toString() 輸出，讓你除錯時不用看到 Instance of 'Point' 這種沒用的訊息。
+
+
+
+// /**
+//  * 主題：Equatable 套件與自動化比較 (Automated Equality)
+//  * 核心目標：利用 Equatable 自動處理 operator == 和 hashCode 的覆寫工作，
+//  * 讓開發者專注於定義「哪些資料代表這個物件」。
+//  */
+
+// // [import]：匯入指令。
+// // ['package:equatable/equatable.dart']：引入外部套件 Equatable。
+// // 💡 注意：這不是 Dart 內建的，需要在 pubspec.yaml 中添加依賴才能使用。
+// import 'package:equatable/equatable.dart';
+
+// // [class Point]：定義類別 Point。
+// // [extends Equatable]：繼承 Equatable 類別。
+// // 💡 關鍵：這是魔法發生的原因。Point 現在繼承了 Equatable 已經寫好的 == 和 hashCode 邏輯。
+// class Point extends Equatable {
+  
+//   // [const Point]：常數建構子 (Constant Constructor)。
+//   // [(this.x, this.y)]：[this shorthand syntax] (this 簡寫語法)。
+//   // 自動將傳入的第一個引數賦值給 x，第二個給 y。
+//   const Point(this.x, this.y);
+
+//   // [final int x]：不可變的成員變數 (Immutable Property)。
+//   final int x;
+//   // [final int y]：不可變的成員變數。
+//   final int y;
+
+//   // -------------------------------------------------------
+//   // 核心設定：定義比較邏輯 (The Props Getter)
+//   // -------------------------------------------------------
+  
+//   // [@override]：覆寫 Equatable 定義的 props 屬性。
+//   // [List<Object?>]：回傳型別。這是一個包含所有「參與比較」屬性的清單。
+//   // [get props]：Getter (讀取器)。
+//   // [=> [x, y]]：箭頭語法。回傳一個包含 x 和 y 的 List。
+//   // 💡 運作原理：
+//   // 當你執行 p1 == p2 時，Equatable 會自動去比較這兩個物件的 props 清單。
+//   // 如果 props 裡的 x 和 y 都一樣，Equatable 就會判定這兩個 Point 相等。
+//   // 這樣你就不用手寫一堆 if (other is Point && other.x == x ...) 了。
+//   @override
+//   List<Object?> get props => [x, y];
+
+//   // -------------------------------------------------------
+//   // 選用設定：自動 toString (Stringify)
+//   // -------------------------------------------------------
+
+//   // [@override]：覆寫 stringify 屬性。
+//   // [bool get stringify]：Getter，回傳布林值。
+//   // [=> true]：設為 true，開啟 Equatable 的自動 toString 功能。
+//   // 💡 效果：print(Point(1, 1)) 會自動印出 "Point(1, 1)"，
+//   // 你不需要自己手寫 toString() 方法了！
+//   @override
+//   bool get stringify => true;
+
+//   // -------------------------------------------------------
+//   // 運算子重載 (Operator Overloading) - 加法與乘法
+//   // -------------------------------------------------------
+//   // 這裡展示了即使使用了 Equatable，你依然可以定義其他的運算子行為。
+
+//   // [operator +]：定義加法行為。
+//   Point operator +(Point other) {
+//     return Point(x + other.x, y + other.y);
+//   }
+
+//   // [operator *]：定義乘法行為。
+//   Point operator *(int other) {
+//     return Point(x * other, y * other);
+//   }
+// }
+
+// // [void main()]：程式進入點。
+// void main() {
+//   // -------------------------------------------------------
+//   // 驗證 Equatable 的威力
+//   // -------------------------------------------------------
+
+//   // [Point(0, 0) == Point(0, 0)]：比較兩個不同的物件實體。
+//   // 1. 因為繼承了 Equatable，它會去檢查 props。
+//   // 2. props 是 [0, 0] 和 [0, 0]。
+//   // 3. 內容完全相同 -> 回傳 true。
+//   // 💡 如果沒有 Equatable，這裡預設會是 false (比較記憶體位址)。
+//   print(Point(0, 0) == Point(0, 0)); // 輸出: true
+
+//   // [print(...)]：驗證 stringify 功能。
+//   // 輸出: Point(x: 1, y: 1) (Equatable 預設的格式，清楚易讀)
+//   print(Point(1, 1)); 
+// }
+
+
+
+// 為什麼一定要用 Immutable (不可變) 類別？
+
+// 在 Equatable 或 Flutter 開發中，我們幾乎總是定義 final 屬性。這背後有三大硬核理由：
+
+// 1. 雜湊碼的災難 (The HashCode Trap) 💣
+
+// 這是最技術性、也最致命的原因。
+
+// 原理：Map 和 Set 是靠 hashCode 來決定物件存放的位置（桶子）。
+
+// 規則：如果兩個物件相等 (==)，它們的 hashCode 必須相同。
+
+// 災難場景：
+// 如果你用一個「可變物件」當作 Map 的 Key，當你修改了物件內部的數值，它的 hashCode 也會跟著變。
+
+// 結果：你親手把鑰匙丟進大海裡。你明明拿著同一個物件，卻再也找不到它在 Map 裡的資料了。
