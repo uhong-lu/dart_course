@@ -60,7 +60,7 @@ void main(){
       'type': 'triangle',
     }
   ];
-  final shapes = shapeJson.map((shapeJson) => Shape.fromJson(shapeJson));
+  final shapes = shapeJson.map((jsonItem) => Shape.fromJson(jsonItem));
   shapes.forEach(printArea);
 }
 
