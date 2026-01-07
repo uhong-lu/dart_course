@@ -1,0 +1,8 @@
+// To follow along, add a pubspec.yaml file with the following contents to your project:
+// name: test
+// description: Simple ecommerce command line app
+ 
+// environment:
+//   sdk: '>=2.12.0 <4.0.0'
+ 
+// dependencies:

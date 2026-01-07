@@ -49,7 +49,7 @@ class Point {
 void main(){ 
   print( 5 == 5);  
   print( Point(0,0) == Point(0,0));   //one on the left one on the right  //need to pass an argument of type ibject beacuse the equality operator works with two operands
-  print( Point(0,0) == 'abc');      //Point == to a string literal //when this run then equality operator will be called with a value of type 'String' which is as subclass of 'Object'
+  // print( Point(0,0) == 'abc');      //Point == to a string literal //when this run then equality operator will be called with a value of type 'String' which is as subclass of 'Object'
  }
 }
 //Bottom line: we need to check that at runtime this object is actually of type 'Point' before we can compare its coordinates
