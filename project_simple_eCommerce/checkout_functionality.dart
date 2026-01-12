@@ -43,7 +43,6 @@ class Cart{
       .map((item) => item.price)
       .reduce((value, element) => value + element);
 
-
   @override
   String toString(){
     if(_items.isEmpty){
