@@ -2,7 +2,12 @@
 
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'weather.dart';
 
+class WeatherApiException implements Exception {
+  const WeatherApiException(this.message);
+  final String message;
+}
 
 class Weather {
   const Weather({
@@ -40,11 +45,11 @@ class WeatherApiClient {
     final locationUrl = Uri.parse('$baseUrl/location/search/?query=$city');
     final locationResponse = await http.get(locationUrl);
     if (locationResponse.statusCode != 200) {
-      throw Exception('Error getting locationID for city: $city');
+      throw WeatherApiException('Error getting locationID for city: $city');
     }
     final locationJson = jsonDecode(locationResponse.body) as List; 
     if(locationJson.isEmpty){
-      throw Exception('No location found for city: $city');
+      throw WeatherApiException('No location found for city: $city');
     }
     return locationJson.first['woeid'] as int; 
   }
@@ -53,10 +58,13 @@ class WeatherApiClient {
     final weatherUrl = Uri.parse('$baseUrl/location/$locationId/');
     final weatherResponse = await http.get(weatherUrl);
     if (weatherResponse.statusCode != 200) {
-      throw Exception('Error getting weather for locationID: $locationId');
+      throw WeatherApiException('Error getting weather for locationID: $locationId');
     }
     final weatherJson = jsonDecode(weatherResponse.body);
     final consolidatedWeather = weatherJson['consolidated_weather'] as List;
+    if (consolidatedWeather.isEmpty) {
+      throw WeatherApiException('No weather data found for locationID: $locationId');
+    }
     return Weather.fromJson(consolidatedWeather[0]);
   }
 
@@ -76,9 +84,13 @@ Future<void> main(List<String> arguments) async {
   final city = arguments.first;
   final api = WeatherApiClient();
   try {
-  final weather = await api.getWeather(city);
-  print(weather);
+    final weather = await api.getWeather(city);
+    print(weather);
+  } on WeatherApiException catch (e) {
+    print('Error: ${e.message}');
+  } on SocketException catch (_) {
+    print(' Could not fetch data. Check your connection. ');
   } catch (e) {
-    print('Error: $e');
+    print('An unexpected error occurred: $e');
   }
 }
